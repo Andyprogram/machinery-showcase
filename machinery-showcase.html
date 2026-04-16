@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机械设备展示中心</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a5f7a;
+            --primary-dark: #134b61;
+            --primary-light: #2d8baf;
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.4);
+            --gradient-1: linear-gradient(135deg, #1a5f7a 0%, #2d8baf 100%);
+            --gradient-2: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-decoration::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 20%, rgba(26, 95, 122, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-2%, -2%) rotate(1deg); }
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem 0.875rem 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .nav-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+
+        /* Hero区域 */
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 分类筛选 */
+        .filter-section {
+            padding: 0 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .filter-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-tab:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .filter-tab.active {
+            background: var(--gradient-1);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px rgba(26, 95, 122, 0.4);
+        }
+
+        .filter-tab .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.125rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        /* 设备网格 */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 设备卡片 */
+        .equipment-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .equipment-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .equipment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .equipment-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(to top, var(--bg-card) 0%, transparent 100%);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--gradient-2);
+            color: #000;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-category {
+            display: inline-block;
+            background: rgba(26, 95, 122, 0.2);
+            color: var(--primary-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .spec-tag {
+            background: var(--bg-dark);
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-details {
+            color: var(--primary-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+        }
+
+        .equipment-card:hover .view-details {
+            gap: 0.75rem;
+        }
+
+        .price-tag {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* 详情模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--bg-card);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-category {
+            display: inline-block;
+            background: var(--gradient-1);
+            color: white;
+            padding: 0.375rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .spec-card {
+            background: var(--bg-dark);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .spec-card-label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .spec-card-value {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .features-section {
+            margin-bottom: 2rem;
+        }
+
+        .features-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
+
+        .feature-icon {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .modal-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 95, 122, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+        }
+
+        /* 无结果提示 */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .no-results-text {
+            font-size: 1.25rem;
+        }
+
+        /* 页脚 */
+        .footer {
+            position: relative;
+            z-index: 1;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .equipment-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-wrap: wrap;
+            }
+
+            .nav-stats {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .equipment-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .modal-header {
+                height: 200px;
+                font-size: 5rem;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-actions {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decoration"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">⚙️</div>
+                <span>机械装备中心</span>
+            </a>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索设备名称、型号或特性...">
+            </div>
+            <div class="nav-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">设备总数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="categoryCount">0</div>
+                    <div class="stat-label">设备分类</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- Hero区域 -->
+        <section class="hero">
+            <h1 class="hero-title">专业机械设备展示平台</h1>
+            <p class="hero-subtitle">汇聚行业顶尖机械设备，为您提供全方位的工程解决方案</p>
+        </section>
+
+        <!-- 分类筛选 -->
+        <section class="filter-section">
+            <div class="filter-tabs" id="filterTabs">
+                <!-- 动态生成 -->
+            </div>
+        </section>
+
+        <!-- 设备网格 -->
+        <section class="equipment-grid" id="equipmentGrid">
+            <!-- 动态生成 -->
+        </section>
+
+        <!-- 无结果提示 -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <div class="no-results-icon">🔍</div>
+            <div class="no-results-text">未找到匹配的设备</div>
+        </div>
+    </main>
+
+    <!-- 详情模态框 -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal" id="modal">
+        <div class="modal-header" id="modalHeader">
+            <button class="modal-close" id="modalClose">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- 动态生成 -->
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2024 机械装备展示中心 | 专业 · 可靠 · 高效</p>
+    </footer>
+
+    <script>
+        // 设备数据
+        const equipmentData = [
+            {
+                id: 1,
+                name: "XG-9000 智能挖掘机",
+                category: "工程机械",
+                icon: "🚜",
+                badge: "热销",
+                shortDesc: "采用智能控制系统，高效节能，适用于各类土方工程作业",
+                fullDesc: "XG-9000智能挖掘机是新一代高效能挖掘设备，搭载先进的AI智能控制系统，可实现自动挖掘、智能避障、远程操控等功能。采用节能环保发动机，油耗降低30%，排放达到国四标准。整机结构坚固耐用，维护成本低，是现代工程建设的理想选择。",
+                specs: {
+                    power: "185kW",
+                    weight: "45吨",
+                    capacity: "2.5m³",
+                    depth: "8.2米"
+                },
+                features: ["AI智能控制系统", "远程遥控操作", "节能环保发动机", "360°全景监控", "自动挖掘模式", "智能故障诊断"],
+                price: "¥128万起"
+            },
+            {
+                id: 2,
+                name: "QZ-500 塔式起重机",
+                category: "起重设备",
+                icon: "🏗️",
+                badge: "新品",
+                shortDesc: "超大起重力矩，安全稳定，适用于高层建筑施工",
+                fullDesc: "QZ-500塔式起重机采用模块化设计，安装拆卸便捷。配备智能监控系统，实时监测载荷、风速、倾角等参数，确保作业安全。起重力矩达500吨·米，最大起重量12吨，工作幅度覆盖范围广，是高层建筑施工的首选设备。",
+                specs: {
+                    power: "55kW",
+                    height: "80米",
+                    capacity: "12吨",
+                    radius: "70米"
+                },
+                features: ["智能安全监控", "变频调速系统", "模块化设计", "防碰撞预警", "远程数据传输", "自动润滑系统"],
+                price: "¥85万起"
+            },
+            {
+                id: 3,
+                name: "CNC-800 五轴加工中心",
+                category: "加工设备",
+                icon: "⚙️",
+                badge: "高端",
+                shortDesc: "五轴联动精密加工，满足航空航天等高精度需求",
+                fullDesc: "CNC-800五轴加工中心采用高端数控系统，实现五轴联动精密加工。定位精度±0.005mm，重复定位精度±0.003mm，可加工复杂曲面零件。适用于航空航天、汽车制造、模具加工等高精度加工领域。",
+                specs: {
+                    power: "35kW",
+                    spindle: "18000rpm",
+                    accuracy: "±0.005mm",
+                    travel: "800×600×500mm"
+                },
+                features: ["五轴联动加工", "高速电主轴", "热误差补偿", "在线测量系统", "刀具破损检测", "远程诊断功能"],
+                price: "¥280万起"
+            },
+            {
+                id: 4,
+                name: "LC-2000 激光切割机",
+                category: "加工设备",
+                icon: "⚡",
+                badge: "高效",
+                shortDesc: "高功率光纤激光，切割速度快，切口质量优",
+                fullDesc: "LC-2000光纤激光切割机采用进口高功率激光器，切割速度快、效率高。配备自动上下料系统，可实现24小时无人值守作业。适用于碳钢、不锈钢、铝合金等多种金属材料的精密切割。",
+                specs: {
+                    power: "6000W",
+                    speed: "30m/min",
+                    thickness: "25mm",
+                    area: "3000×1500mm"
+                },
+                features: ["高功率光纤激光", "自动上下料系统", "套料优化软件", "切割头自动调焦", "除尘净化系统", "远程监控功能"],
+                price: "¥156万起"
+            },
+            {
+                id: 5,
+                name: "ZL-50 装载机",
+                category: "工程机械",
+                icon: "🚛",
+                badge: "经典",
+                shortDesc: "动力强劲，操作灵活，广泛应用于矿山、港口等场所",
+                fullDesc: "ZL-50装载机采用大功率发动机，动力强劲，燃油经济性好。优化设计的液压系统，操作轻便灵活。加强型结构件，可靠性高，维护方便。广泛应用于矿山开采、港口装卸、城市建设等领域。",
+                specs: {
+                    power: "162kW",
+                    weight: "18吨",
+                    capacity: "3.0m³",
+                    speed: "38km/h"
+                },
+                features: ["大功率发动机", "优化液压系统", "加强型结构件", "舒适驾驶室", "便捷维护设计", "多功能工作装置"],
+                price: "¥45万起"
+            },
+            {
+                id: 6,
+                name: "DT-300 推土机",
+                category: "工程机械",
+                icon: "🚧",
+                badge: "强力",
+                shortDesc: "强劲推土能力，适应恶劣工况，工程建设的利器",
+                fullDesc: "DT-300推土机配备大功率发动机和坚固的推土装置，能够胜任各类恶劣工况下的推土作业。采用静液压传动系统，操控精准，工作效率高。驾驶室配备空调和减震座椅，操作舒适。",
+                specs: {
+                    power: "220kW",
+                    weight: "32吨",
+                    blade: "4.5m",
+                    depth: "0.6米"
+                },
+                features: ["静液压传动", "坚固推土装置", "舒适驾驶室", "智能监控系统", "低噪音设计", "便捷维护通道"],
+                price: "¥98万起"
+            },
+            {
+                id: 7,
+                name: "GY-100 工业机器人",
+                category: "自动化设备",
+                icon: "🤖",
+                badge: "智能",
+                shortDesc: "六轴工业机器人，高精度高速度，助力智能制造",
+                fullDesc: "GY-100六轴工业机器人采用高性能伺服电机和精密减速器，实现高精度、高速度运动。重复定位精度±0.02mm，最大负载100kg。支持多种编程方式，可广泛应用于焊接、搬运、装配、喷涂等工业场景。",
+                specs: {
+                    power: "7.5kW",
+                    payload: "100kg",
+                    reach: "2.0米",
+                    accuracy: "±0.02mm"
+                },
+                features: ["六轴联动", "高精度伺服", "多种编程方式", "碰撞检测功能", "离线编程支持", "视觉系统集成"],
+                price: "¥35万起"
+            },
+            {
+                id: 8,
+                name: "YL-500 压路机",
+                category: "工程机械",
+                icon: "🛤️",
+                badge: "可靠",
+                shortDesc: "高效压实作业，道路建设的必备设备",
+                fullDesc: "YL-500振动压路机采用双轮驱动双轮振动设计，压实效率高，压实效果好。配备智能喷水系统，防止沥青粘轮。驾驶室视野开阔，操作舒适。适用于公路、机场、大坝等大型工程的压实作业。",
+                specs: {
+                    power: "118kW",
+                    weight: "12吨",
+                    width: "2.13米",
+                    force: "240kN"
+                },
+                features: ["双轮振动", "智能喷水系统", "铰接式转向", "宽敞驾驶室", "无级变速", "维护便捷"],
+                price: "¥68万起"
+            },
+            {
+                id: 9,
+                name: "FD-200 发电机组",
+                category: "动力设备",
+                icon: "🔌",
+                badge: "稳定",
+                shortDesc: "大功率柴油发电机组，稳定可靠，应急供电首选",
+                fullDesc: "FD-200柴油发电机组采用知名品牌发动机和发电机，运行稳定可靠。配备智能控制系统，可实现自动启动、并机运行、远程监控等功能。适用于工厂、医院、数据中心等重要场所的备用电源。",
+                specs: {
+                    power: "200kW",
+                    voltage: "400V",
+                    frequency: "50Hz",
+                    fuel: "45L/h"
+                },
+                features: ["智能控制系统", "自动启动功能", "并机运行", "远程监控", "低噪音设计", "自动保护系统"],
+                price: "¥28万起"
+            },
+            {
+                id: 10,
+                name: "KJ-300 空压机",
+                category: "动力设备",
+                icon: "💨",
+                badge: "节能",
+                shortDesc: "螺杆式空压机，高效节能，气源稳定",
+                fullDesc: "KJ-300螺杆式空压机采用高效螺杆主机，配合变频控制系统，可根据用气量自动调节转速，节能效果显著。配备智能控制器，实时监控运行状态，维护提醒功能。适用于机械制造、纺织、食品等行业。",
+                specs: {
+                    power: "55kW",
+                    pressure: "0.8MPa",
+                    capacity: "10m³/min",
+                    noise: "75dB"
+                },
+                features: ["变频节能控制", "高效螺杆主机", "智能控制器", "维护提醒功能", "余热回收系统", "远程监控"],
+                price: "¥18万起"
+            },
+            {
+                id: 11,
+                name: "SS-100 输送机",
+                category: "输送设备",
+                icon: "📦",
+                badge: "高效",
+                shortDesc: "皮带输送机，输送量大，运行平稳",
+                fullDesc: "SS-100皮带输送机采用高强度输送带，承载能力强，运行平稳可靠。驱动系统采用变频调速，可根据需要调节输送速度。适用于矿山、港口、电力、建材等行业的物料输送。",
+                specs: {
+                    power: "45kW",
+                    length: "100米",
+                    width: "1.0米",
+                    capacity: "800t/h"
+                },
+                features: ["高强度输送带", "变频调速", "托辊自动对中", "跑偏保护装置", "拉紧装置", "防雨防尘罩"],
+                price: "¥22万起"
+            },
+            {
+                id: 12,
+                name: "TJ-50 提升机",
+                category: "输送设备",
+                icon: "⬆️",
+                badge: "安全",
+                shortDesc: "斗式提升机，垂直提升，密封输送",
+                fullDesc: "TJ-50斗式提升机采用优质料斗和高强度链条，提升效率高，运行可靠。全密封结构设计，无粉尘外溢，环保清洁。适用于粮食、化工、建材等行业的粉状、颗粒状物料垂直提升。",
+                specs: {
+                    power: "22kW",
+                    height: "50米",
+                    capacity: "150t/h",
+                    speed: "1.5m/s"
+                },
+                features: ["全密封结构", "高强度链条", "耐磨料斗", "防堵料检测", "自动张紧装置", "检修平台"],
+                price: "¥15万起"
+            }
+        ];
+
+        // 获取所有分类
+        const categories = [...new Set(equipmentData.map(item => item.category))];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initStats();
+            initFilterTabs();
+            renderEquipment(equipmentData);
+            initSearch();
+            initModal();
+        });
+
+        // 初始化统计数据
+        function initStats() {
+            document.getElementById('totalCount').textContent = equipmentData.length;
+            document.getElementById('categoryCount').textContent = categories.length;
+        }
+
+        // 初始化分类标签
+        function initFilterTabs() {
+            const filterTabs = document.getElementById('filterTabs');
+            
+            // 全部标签
+            let html = `<button class="filter-tab active" data-category="all">
+                全部设备 <span class="count">${equipmentData.length}</span>
+            </button>`;
+            
+            // 各分类标签
+            categories.forEach(category => {
+                const count = equipmentData.filter(item => item.category === category).length;
+                html += `<button class="filter-tab" data-category="${category}">
+                    ${category} <span class="count">${count}</span>
+                </button>`;
+            });
+            
+            filterTabs.innerHTML = html;
+            
+            // 绑定点击事件
+            filterTabs.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 更新激活状态
+                    filterTabs.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 筛选设备
+                    const category = this.dataset.category;
+                    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                    filterEquipment(category, searchTerm);
+                });
+            });
+        }
+
+        // 渲染设备卡片
+        function renderEquipment(equipment) {
+            const grid = document.getElementById('equipmentGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (equipment.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            grid.innerHTML = equipment.map((item, index) => `
+                <div class="equipment-card" data-id="${item.id}" style="animation-delay: ${index * 0.1}s">
+                    <div class="card-image">
+                        <span class="card-badge">${item.badge}</span>
+                        ${item.icon}
+                    </div>
+                    <div class="card-content">
+                        <span class="card-category">${item.category}</span>
+                        <h3 class="card-title">${item.name}</h3>
+                        <p class="card-description">${item.shortDesc}</p>
+                        <div class="card-specs">
+                            ${Object.entries(item.specs).slice(0, 3).map(([key, value]) => 
+                                `<span class="spec-tag">${value}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="view-details">查看详情 →</span>
+                        <span class="price-tag">${item.price}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 绑定卡片点击事件
+            grid.querySelectorAll('.equipment-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    const item = equipmentData.find(e => e.id === id);
+                    if (item) showModal(item);
+                });
+            });
+        }
+
+        // 筛选设备
+        function filterEquipment(category, searchTerm) {
+            let filtered = equipmentData;
+            
+            // 分类筛选
+            if (category !== 'all') {
+                filtered = filtered.filter(item => item.category === category);
+            }
+            
+            // 搜索筛选
+            if (searchTerm) {
+                filtered = filtered.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) ||
+                    item.category.toLowerCase().includes(searchTerm) ||
+                    item.shortDesc.toLowerCase().includes(searchTerm) ||
+                    item.features.some(f => f.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            renderEquipment(filtered);
+        }
+
+        // 初始化搜索
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            let debounceTimer;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const activeCategory = document.querySelector('.filter-tab.active').dataset.category;
+                    filterEquipment(activeCategory, this.value.toLowerCase());
+                }, 300);
+            });
+        }
+
+        // 显示详情模态框
+        function showModal(item) {
+            const modal = document.getElementById('modal');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalHeader = document.getElementById('modalHeader');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalHeader.innerHTML = `
+                ${item.icon}
+                <button class="modal-close" id="modalCloseBtn">✕</button>
+            `;
+            
+            modalBody.innerHTML = `
+                <span class="modal-category">${item.category}</span>
+                <h2 class="modal-title">${item.name}</h2>
+                <p class="modal-subtitle">${item.shortDesc}</p>
+                <p class="modal-description">${item.fullDesc}</p>
+                
+                <div class="specs-grid">
+                    ${Object.entries(item.specs).map(([key, value]) => `
+                        <div class="spec-card">
+                            <div class="spec-card-label">${getSpecLabel(key)}</div>
+                            <div class="spec-card-value">${value}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="features-section">
+                    <h3 class="features-title">✨ 核心特性</h3>
+                    <div class="features-list">
+                        ${item.features.map(feature => `
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span>${feature}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="modal-price">${item.price}</div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary">收藏设备</button>
+                        <button class="btn btn-primary">立即咨询</button>
+                    </div>
+                </div>
+            `;
+            
+            modalOverlay.classList.add('active');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // 绑定关闭按钮
+            document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            const modalOverlay = document.getElementById('modalOverlay');
+            
+            modal.classList.remove('active');
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 初始化模态框
+        function initModal() {
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            
+            modalOverlay.addEventListener('click', closeModal);
+            modalClose.addEventListener('click', closeModal);
+            
+            // ESC键关闭
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeModal();
+            });
+        }
+
+        // 规格标签映射
+        function getSpecLabel(key) {
+            const labels = {
+                power: '功率',
+                weight: '重量',
+                capacity: '容量',
+                depth: '深度',
+                height: '高度',
+                radius: '工作半径',
+                spindle: '主轴转速',
+                accuracy: '精度',
+                travel: '行程',
+                speed: '速度',
+                thickness: '切割厚度',
+                area: '工作面积',
+                blade: '刀片宽度',
+                payload: '负载',
+                reach: '臂展',
+                voltage: '电压',
+                frequency: '频率',
+                fuel: '油耗',
+                pressure: '压力',
+                noise: '噪音',
+                length: '长度',
+                width: '宽度',
+                force: '激振力'
+            };
+            return labels[key] || key;
+        }
+    </script>
+</body>
+</html>
